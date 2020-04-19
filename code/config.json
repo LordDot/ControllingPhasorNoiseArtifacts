@@ -1,0 +1,12 @@
+{
+  "includes": [
+    "shared.shader",
+    "smoothNoise.shader",
+    "angle.shader",
+    "straight.shader",
+    "baseThing.shader"
+  ],
+  "fragment": "fragment.shader",
+  "vertex": "vertex.shader",
+  out: "build/bundeledShader.shader"
+}
