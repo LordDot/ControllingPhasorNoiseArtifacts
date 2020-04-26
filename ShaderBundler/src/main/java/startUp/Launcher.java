@@ -1,9 +1,10 @@
 package startUp;
 
+import artifact.Artifact;
+import artifact.ArtifactReader;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.google.gson.*;
-import jdk.nashorn.internal.parser.JSONParser;
 
 import java.io.*;
 import java.util.LinkedList;
@@ -21,15 +22,24 @@ public class Launcher {
 
     private void launch() throws IOException {
         JsonObject obj = JsonParser.parseReader(new FileReader(parameters.get(0))).getAsJsonObject();
+        String workingDir = "";
+        if(parameters.size() > 1){
+            workingDir = parameters.get(1) + "/";
+        }
         JsonArray includes = obj.get("includes").getAsJsonArray();
-        String vertexShader = obj.get("vertex").getAsString();
-        String fragmentShader = obj.get("fragment").getAsString();
-        String output = obj.get("out").getAsString();
+        String vertexShader = workingDir + obj.get("vertex").getAsString();
+        String fragmentShader = workingDir + obj.get("fragment").getAsString();
+        String output = workingDir + obj.get("out").getAsString();
         List<File> includeFiles = new LinkedList<>();
         for(JsonElement s : includes){
-            includeFiles.add(new File(s.getAsString()));
+            includeFiles.add(new File(workingDir + s.getAsString()));
         }
-        ShaderBundler sb = new ShaderBundler(new File(vertexShader), new File(fragmentShader), includeFiles);
+
+        JsonObject artifactTypes = obj.get("artifactTypes").getAsJsonObject();
+        ArtifactReader reader = new ArtifactReader(artifactTypes);
+        List<Artifact> artifacts = reader.getArtifacts(obj.get("artifacts").getAsJsonArray());
+
+        ShaderBundler sb = new ShaderBundler(new File(vertexShader), new File(fragmentShader), includeFiles, artifacts);
         sb.bundle(new File(output));
     }
 

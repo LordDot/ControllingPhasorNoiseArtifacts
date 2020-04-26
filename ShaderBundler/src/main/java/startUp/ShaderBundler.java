@@ -1,18 +1,30 @@
 package startUp;
 
+import artifact.Artifact;
+
 import java.io.*;
 import java.util.List;
 
 public class ShaderBundler {
 
-    private final File vertexShader;
-    private final File fragmentShader;
-    private final List<File> includes;
+    private File vertexShader;
+    private File fragmentShader;
+    private List<File> includes;
+    private List<Artifact> artifacts;
 
-    public ShaderBundler(File vertexShader, File fragmentShader, List<File> includes){
+    public ShaderBundler(File vertexShader, File fragmentShader, List<File> includes, List<Artifact> artifacts){
         this.vertexShader = vertexShader;
         this.fragmentShader = fragmentShader;
         this.includes = includes;
+        this.artifacts = artifacts;
+    }
+
+    private String getArtifactsString(){
+        StringBuilder b = new StringBuilder();
+        for(Artifact a : artifacts){
+            b.append(a.format() + "\n");
+        }
+        return b.toString();
     }
 
     public void bundle(File outputFile) throws IOException {
@@ -20,6 +32,7 @@ public class ShaderBundler {
             outputFile.delete();
         }
         outputFile.createNewFile();
+
         Writer out = new FileWriter(outputFile);
         BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("Prefix.txt")));
         String line;
@@ -40,11 +53,16 @@ public class ShaderBundler {
             out.write(line + "\n");
         }
         in.close();
+
         out.write("#endif\n");
         out.write("#ifdef FRAGMENT\n");
         in = new BufferedReader(new FileReader(fragmentShader));
         while((line = in.readLine()) != null){
-            out.write(line + "\n");
+            if(line.trim().equals("{ARTIFACTS}")){
+                out.write(getArtifactsString());
+            }else {
+                out.write(line + "\n");
+            }
         }
         in.close();
         out.write("#endif\n");

@@ -23,7 +23,7 @@ dependencies {
 }
 
 run {
-    args "../code/config.json"
+    args = ["../code/config.json", "../code/"]
 }
 
 jar {

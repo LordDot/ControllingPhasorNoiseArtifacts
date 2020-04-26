@@ -6,7 +6,90 @@
     "straight.shader",
     "baseThing.shader"
   ],
+  "artifactTypes":{
+    "sing":{
+      "parameters":[
+        {
+          "name":"x",
+          "type":"float"
+        },
+        {
+          "name":"y",
+          "type":"float"
+        }
+      ],
+      "template":"phi += stairCase(uv, vec2(%f, %f));"
+    },
+    "dual":{
+      "parameters":[
+        {
+          "name":"x1",
+          "type":"float"
+        },
+        {
+          "name":"y1",
+          "type":"float"
+        },
+        {
+          "name":"x2",
+          "type":"float"
+        },
+        {
+          "name":"y2",
+          "type":"float"
+        }
+      ],
+      "template":"phi += baseThing(uv,vec2(%f,%f),vec2(%f,%f), 0);"
+    },
+    "rip":{
+      "parameters":[
+        {
+          "name":"offset",
+          "type":"float"
+        },
+        {
+          "name":"x1",
+          "type":"float"
+        },
+        {
+          "name":"y1",
+          "type":"float"
+        },
+        {
+          "name":"x2",
+          "type":"float"
+        },
+        {
+          "name":"y2",
+          "type":"float"
+        }
+      ],
+      "template":"phi += %f * baseThing(uv,vec2(%f,%f),vec2(%f,%f), 0);"
+    }
+  },
+  "artifacts":[
+    {
+      "type":"sing",
+      "x":0.5,
+      "y":0.5
+    },
+    {
+      "type":"dual",
+      "x1":0.2,
+      "y1":0.2,
+      "x2":0.8,
+      "y2":0.8
+    },
+    {
+      "type":"rip",
+      "x1":0.3,
+      "y1":0.2,
+      "x2":0.3,
+      "y2":0.8,
+      "offset":0.5
+    }
+  ],
   "fragment": "fragment.shader",
   "vertex": "vertex.shader",
-  out: "build/bundeledShader.shader"
+  "out": "build/bundeledShader.shader"
 }
