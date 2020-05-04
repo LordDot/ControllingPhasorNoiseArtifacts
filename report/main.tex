@@ -1,5 +1,8 @@
 \documentclass{utue} %utue.cls required for Uni Tuebingen corporate design
 
+\usepackage[style=numeric]{biblatex}
+\addbibresource{bibliography.bib}
+
 % Values for title generation
 \title{Controlling Phasor Noise Artifacts}
 \author{Jonathan Lang}
@@ -22,15 +25,59 @@
 \section*{Abstract}  
   
 \section{Introduction}   
-To keep up with the shorter development cycles of the current times more work has to be done in shorter time. The tools with which this is achieved are optimization of workflows as well as automation. While even the automation of repetitive tasks can be challenging, automating creative tasks like content creation is even more so. This is where noise algorithms provide assistance. They provide a way to generate non-repeating patterns over potentially infinite space at low memory and computational cost. Using these patterns two influence different aspect of the content, anything form additional detail on surfaces up to the layout of whole worlds can be generated automatically. The generated patterns are as varied as the algorithms itself. The different algorithms also provide different levels of influence over the produced pattern. Additional Parameters to tune the generated pattern are of course desirable, as a richer set of patterns will be applicable for more situations, therefore offering further automation opportunities.
+To keep up with the shorter development cycles of the current times more work has to be done in shorter time. The tools with which this is achieved are optimization of workflows as well as automation. While even the automation of repetitive tasks can be challenging, automating creative tasks like content creation is even more so. This is where noise algorithms provide assistance. They provide a way to generate non-repeating patterns over potentially infinite space at low memory and computational cost. Using these patterns two influence different aspect of the content, anything form additional detail on surfaces up to the layout of whole worlds can be generated automatically. The generated patterns are as varied as the algorithms itself. The different algorithms also provide different levels of influence over the produced pattern. Additional parameters to tune the generated pattern are of course desirable, as a richer set of patterns will be applicable for more situations, therefore offering further automation opportunities.
 
 
-\section{Related Work} 
+\section{Related Work}
+Particularly interesting are anisotropic noise algorithms. As stated in \cite{survey}, these are noise algorithms produce patterns, whose appearance is not invariant to rotation. Besides providing definitions of most noise related terms \citeauthor{survey} also provide an overview of current Noise algorithms. The noise algorithm proposed by \citeauthor{anisotropicNoise} in \cite{anisotropicNoise} is actually not developed to produce interesting patterns with a discernible direction, but to enable the production of filtered noise to prevent aliasing when the noise texture is viewed at an angle. Today the term \textit{anisotropic noise} is more commonly used to refer to noise algorithms, which set out to produce and oriented pattern instead of ones with integrated filtering. One of these algorithms is the one proposed by \citeauthor{randomPhaseNoise} in \cite{randomPhaseNoise}. \citeauthor{randomPhaseNoise} produce noise by placing cosine with random phase, direction and frequency at grid points. By adjusting the way these random values are generated, the power spectrum of the noise can be precisely controlled. The ability to precisely control the power spectrum is a property shared with Gabor Noise as introduced by \citeauthor{gaborNoise} in \cite{gaborNoise}. Gabor Noise is a sparse convolution noise using a poission point process to generate Dirac impulses that are convoluted with the Gabor kernel to produce the final noise. Since this process inherits the power spectrum of the Gabor kernel, which can be adjusted quite precisely, this affords good control over the power spectrum of the noise, especially when differing instances of the Kernel are used. Despite how powerful Gabor noise is, it is still not perfect. One Problem is exhibits is the areas of low contrast, that have never been explicitly specified. This is a conclusion \citeauthor{spectrumOfVariance} also come to. In \cite{spectrumOfVariance} they develop a tool to quantify this local loss of contrast, which they call the spectrum of variance. Based on this, they develop a technique to remove low contrast areas from any noise instance. This generality however is a draw back as much as an advantage, since it can not use any information about the noise generation to achieve lower computation times. This is exactly what \citeauthor{phasorNoise} do in \cite{phasorNoise}. We will later have a more in depth look at their work.\\
+Another big advantage of Gabor noise is its ability to be generated on the surface directly. This does not involve any texture coordinates, so the resulting noise instance does not show any seams. This ability is sought for, as works like \cite{appearanceTextureSynthesis}, \cite{textureSynthesis} and \cite{stripes} show. The former present algorithms, that can synthesise textures directly on surfaces, while the latter addresses a more basic problem. This problem is to find a function on a surface, that varies along a given direction field with a given rate. This is another piece of work we will look at in the following section.
+
+\section{Background}
+\subsection{Gabor Noise}
+Since Phasor Noise inherits most of the abilities of Gabor Noise we will have a look at Gabor Noise before discussing it. As already mentioned Gabor Noise is produced by convolving Dirac impulses placed by a Poisson point process with the Gabor kernel as shown in figure \ref{fig:gaborNoise}. The Gabor kernel $g$ is defined as
+$$
+g(\vec{x}) = e^{\frac{||\vec{x}||}{\sigma^2}}\cdot \cos{(f\langle\vec{u},\vec{x}\rangle)}
+$$
+where $f$ and $\vec{u}$ are frequency and direction of the kernel. Since the other operand of the convolution is a sum of offset Dirac impulses, the convolution deteriorates to a sum of offset versions of the kernel. An instance of Gabor Noise $G$ can therefore be represented as
+$$
+G(\vec{x}) = \sum_ig(\vec{x}-\vec{p}_i)
+$$
+where $\vec{p}_i$ are the positions of the Dirac Impulses. \citeauthor{gaborNoise} also prescribe a random weight to each instance of the kernel. However since this is not relevant for the following discussion, we omit it here for convenience. Figure \ref{fig:gaborNoise} shows an instance of Gabor Noise. The depicted instance is a bilobe instance. This name stems from the appearance of its power spectrum, which is two Gaussian lobes positioned at the frequency and direction of the used kernel. Using different kernels at different positions leads to a more varied appearance. Since the power spectra add up (and are rescaled) this permits to specify a custom power spectrum. Beside this amount of control Gabor noise can of course be extended from two to three dimensional. However \citeauthor{gaborNoise} also present a way to generate Gabor Noise directly on the surface of objects, which allows for seamless texturing.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/gaborKernel}
+  \includegraphics[width=0.45\linewidth]{images/gaborNoise}
+  \caption{An instance of the Gabor Kernel (left) and an Instance of Gabor Noise (right). Note the low contrast areas (marked).}\label{fig:gaborNoise}
+
+\end{figure}
+
+\subsection{Spectrum of Variance}
+Gabor Noise however exhibits areas of low contrast, as figure \ref{fig:gaborNoise} shows. In \cite{spectrumOfVariance} \citeauthor{spectrumOfVariance} develop a tool to quantify these areas. They call this tool the spectrum of variance. As the name suggests for a given signal $s(\vec{x})$ the spectrum of variance $\mathcal{S}(s)$ is defined as
+$$
+\mathcal{S}(s) = \mathcal{F}((s-\overline{s})^2)
+$$
+where $\mathcal{F}$ denotes the Fourier transform and $\overline{s}$ represents the mean of the signal. Any nonzero values nearer than a distance $l$ to the origin correspond to low contrast areas bigger than $l$ in the original signal. As already mentioned, they also propose a process to remove these low contrast areas, namely by normalizing with the windowed standard deviation. However this normalization requires to compute the windowed standard deviation, which requires to evaluate the noise in the windows used. This leads to a big increase in computational cost, which is a significant drawback of this technique.
+
+\subsection{Phasor Noise}
+We already mentioned, that the drawback of the normalisation technique proposed by \citeauthor{spectrumOfVariance} stems from the fact, that they can not use noise algorithm internal information. The logical conclusion is, that the only way to get a normalized noise texture without a big computation overhead is to design a variation of the algorithm, that produces normalized images. This is exactly what \citeauthor{phasorNoise} do in \cite{phasorNoise} for Gabor Noise. They realize, that for a signal of the form $s(x) = f(x)\cdot g(x)$, where $g$ is an oscillating function and $f$ is the envelope of $s$, discarding $f$ leads to a perfectly normalized signal. They then proceed to reformulate the bilobe case of Gabor Noise to have a form
+$$
+G(\vec{x}) = I(\vec{x})\sin{(f\langle\vec{x},\vec{u}\rangle + \varphi(\vec{x}))}
+$$
+where $f$ and $\vec{u}$ are again he frequency and direction of the main oscillation. $I$ is the envelope of the function and $\varphi(\vec{x})$ is the local phase offset of the oscillating part. The way they define $I$ and $\varphi$ this formulation is exactly equivalent to the corresponding Gabor Noise Instance. The main tool they use to do this is Phasor addition, hence the name Phasor Noise. Now, like in our example, we can discard the envelope $I$ to obtain a normalized version of Gabor Noise. \citeauthor{phasorNoise} call this a Phasor Sine wave. The actual Phasor Noise is the argument of the sine. Therefore Phasor Noise itself can not be used directly, but can only be used as input for a periodic function. Because it is defined using its corresponding Gabor Noise instance, it inherits the desirable properties of Gabor Noise, namely being band limited and a surface noise formulation. However, as depicted in figure \ref{fig:phasorNoise}, Phasor Noise exhibits several artifacts previously masked by the low contrast areas. There are two types of artifacts: singularities, where one stripe splits into two and what we will call rips, where the stripes are suddenly offset by some amount. Our goal will be to gain control over these artifacts to allow finer adjustments to the appearance of the noise.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width = 0.45\linewidth]{images/phasorSineWave}
+  \caption{An instance of Phasor Noise. Note the artifacts previously masked by the low contrast areas.}\label{fig:phasorNoise}
+\end{figure}
+
+\subsection{Stripes on Surfaces}
+In section \textcolor{red}{missing} we will see, that we need a function, defined on a mesh, that increases with a direction and speed determined by a vector field. We need this function to generate a stripe pattern by plugging it into a periodic function. As \citeauthor{stripes} already note, this is not alway trivial, even for a simple plane, as vector fields with non-zero curl are non integrable. In \cite{stripes} they provide a solution by deriving an equality constraint, that they than relax to a minimization. While necessary to receive a solution, it unfortunately allows new Singularities to emerge, which is obviously necessary, when considering a objects whose width varies along the stripe direction. As the width the stripes have to cover increases, either the number of stripes needs to increase, or the stripe frequency needs to drop. For our purposes one could replace their work with another way to generate a function that fulfills this purpose, but here we will use their work.
 
 
 
-\bibliographystyle{alpha}
-\bibliography{bibliography}
+\printbibliography
 
 \end{document}
 

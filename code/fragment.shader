@@ -47,7 +47,7 @@
           //vec2 M = iMouse.xy/iResolution.y;
           //M.y = 1.0-M.y;
           //float _o = sqrt(dot(uv,uv));
-          //float _o = uv.x;
+          float _o = uv.x;
           vec2 dir = vec2(cos(_o),sin(_o));
           //float _f = uv.x*20;
 
