@@ -59,23 +59,34 @@ $$
 $$
 where $\mathcal{F}$ denotes the Fourier transform and $\overline{s}$ represents the mean of the signal. Any nonzero values nearer than a distance $l$ to the origin correspond to low contrast areas bigger than $l$ in the original signal. As already mentioned, they also propose a process to remove these low contrast areas, namely by normalizing with the windowed standard deviation. However this normalization requires to compute the windowed standard deviation, which requires to evaluate the noise in the windows used. This leads to a big increase in computational cost, which is a significant drawback of this technique.
 
-\subsection{Phasor Noise}
+\subsection{Phasor Noise}\label{sec:phasorNoise}
 We already mentioned, that the drawback of the normalisation technique proposed by \citeauthor{spectrumOfVariance} stems from the fact, that they can not use noise algorithm internal information. The logical conclusion is, that the only way to get a normalized noise texture without a big computation overhead is to design a variation of the algorithm, that produces normalized images. This is exactly what \citeauthor{phasorNoise} do in \cite{phasorNoise} for Gabor Noise. They realize, that for a signal of the form $s(x) = f(x)\cdot g(x)$, where $g$ is an oscillating function and $f$ is the envelope of $s$, discarding $f$ leads to a perfectly normalized signal. They then proceed to reformulate the bilobe case of Gabor Noise to have a form
 $$
 G(\vec{x}) = I(\vec{x})\sin{(f\langle\vec{x},\vec{u}\rangle + \varphi(\vec{x}))}
 $$
-where $f$ and $\vec{u}$ are again he frequency and direction of the main oscillation. $I$ is the envelope of the function and $\varphi(\vec{x})$ is the local phase offset of the oscillating part. The way they define $I$ and $\varphi$ this formulation is exactly equivalent to the corresponding Gabor Noise Instance. The main tool they use to do this is Phasor addition, hence the name Phasor Noise. Now, like in our example, we can discard the envelope $I$ to obtain a normalized version of Gabor Noise. \citeauthor{phasorNoise} call this a Phasor Sine wave. The actual Phasor Noise is the argument of the sine. Therefore Phasor Noise itself can not be used directly, but can only be used as input for a periodic function. Because it is defined using its corresponding Gabor Noise instance, it inherits the desirable properties of Gabor Noise, namely being band limited and a surface noise formulation. However, as depicted in figure \ref{fig:phasorNoise}, Phasor Noise exhibits several artifacts previously masked by the low contrast areas. There are two types of artifacts: singularities, where one stripe splits into two and what we will call rips, where the stripes are suddenly offset by some amount. Our goal will be to gain control over these artifacts to allow finer adjustments to the appearance of the noise.
+where $f$ and $\vec{u}$ are again the frequency and direction of the main oscillation. $I$ is the envelope of the function and $\varphi(\vec{x})$ is the local phase offset of the oscillating part. The way they define $I$ and $\varphi$ this formulation is exactly equivalent to the corresponding Gabor Noise Instance. The main tool they use to do this is Phasor addition, hence the name Phasor Noise. Now, like in our example, we can discard the envelope $I$ to obtain a normalized version of Gabor Noise. \citeauthor{phasorNoise} call this a Phasor Sine wave. The actual Phasor Noise is the argument of the sine. Therefore Phasor Noise itself can not be used directly, but can only be used as input for a periodic function. Because it is defined using its corresponding Gabor Noise instance, it inherits the desirable properties of Gabor Noise, namely being band limited and a surface noise formulation. However, as depicted in figure \ref{fig:phasorNoise}, Phasor Noise exhibits several artifacts previously masked by the low contrast areas. There are two types of artifacts: singularities, where one stripe splits into two and what we will call rips, where the stripes are suddenly offset by some amount. Our goal will be to gain control over these artifacts to allow finer adjustments to the appearance of the noise.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width = 0.45\linewidth]{images/phasorSineWave}
-  \caption{An instance of Phasor Noise. Note the artifacts previously masked by the low contrast areas.}\label{fig:phasorNoise}
+  \caption{A Phasor Sine Wave. Note the artifacts previously masked by the low contrast areas.}\label{fig:phasorNoise}
 \end{figure}
 
-\subsection{Stripes on Surfaces}
+\subsection{Stripes Patterns on Surfaces}
 In section \textcolor{red}{missing} we will see, that we need a function, defined on a mesh, that increases with a direction and speed determined by a vector field. We need this function to generate a stripe pattern by plugging it into a periodic function. As \citeauthor{stripes} already note, this is not alway trivial, even for a simple plane, as vector fields with non-zero curl are non integrable. In \cite{stripes} they provide a solution by deriving an equality constraint, that they than relax to a minimization. While necessary to receive a solution, it unfortunately allows new Singularities to emerge, which is obviously necessary, when considering a objects whose width varies along the stripe direction. As the width the stripes have to cover increases, either the number of stripes needs to increase, or the stripe frequency needs to drop. For our purposes one could replace their work with another way to generate a function that fulfills this purpose, but here we will use their work.
 
+\section{Phase Generation}
+\subsection{The constant case}
+We will first look at a simple case. This case corresponds to the bilobe case of Phasor Noise. This means a constant oscillation direction and frequency. However before we start out, we will define a third type of artifact besides singularities and rips: wobble. Comparing the areas of a Phasor Sine Wave with a regular Sine Wave, we find, that the lines are not perfectly straight. We will refer to this fact as wobble from no on. From section \ref{sec:phasorNoise} we recall that in this case Phasor Noise consists of two parts: A function increasing in a given direction and a phase offset. Figure \ref{fig:phasorNoisePhase} shows a Phasor Noise instance as well as its phase offset. Comparing the phase from figure \ref{fig:phasorNoisePhase} with figure \ref{fig:phasorNoise} we can easily find a correspondence between artifacts of the Phasor Sine Wave and feature of the phase. The existence of wobble is caused by the fact, that the phase is not constant even in areas, where there are no other artefacts present. \citeauthor{phasorNoise} already identify that rips are caused by sudden value changes in the phase offset, while singularities are located at points around which the phase offset rotates abruptly.\\
 
+This defines our goal. For a set of points $s_i$, at which we want singularities to occur and a set of line segments $l_i$, along which we want rips to occur, we want to construct a varying phase offset $\varphi_c$ that suddenly changes when crossing any $l_i$ and abruptly rotates around all $s_i$.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/phasorNoise}
+  \includegraphics[width=0.45\linewidth]{images/phasorPhase}
+  \caption{Phasor Noise (left) and its phase offset (right). Angle is mapped to hue.}\label{fig:phasorNoisePhase}
+\end{figure}
 
 \printbibliography
 
