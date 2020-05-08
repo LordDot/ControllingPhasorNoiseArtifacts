@@ -33,12 +33,13 @@ Particularly interesting are anisotropic noise algorithms. As stated in \cite{su
 Another big advantage of Gabor noise is its ability to be generated on the surface directly. This does not involve any texture coordinates, so the resulting noise instance does not show any seams. This ability is sought for, as works like \cite{appearanceTextureSynthesis}, \cite{textureSynthesis} and \cite{stripes} show. The former present algorithms, that can synthesise textures directly on surfaces, while the latter addresses a more basic problem. This problem is to find a function on a surface, that varies along a given direction field with a given rate. This is another piece of work we will look at in the following section.
 
 \section{Background}
+To avoid confusion we will denote a scalar using a simple letter e.g. $a$. A vector will be denoted with an arrow above e.g. $\vec{u}$. A scalar or elementwise multiplication will be represented by $\cdot$ or the absence of an operator e.g. $a\cdot b=ab$ is the multiplication between $a$ and $b$. The operands of a scalar product will be surrounded by $\langle$ and $\rangle$ e.g. $\langle\vec{u},\vec{v}\rangle$ denotes the scalar product between the vectors $\vec{u}$ and $\vec{v}$.
 \subsection{Gabor Noise}
 Since Phasor Noise inherits most of the abilities of Gabor Noise we will have a look at Gabor Noise before discussing it. As already mentioned Gabor Noise is produced by convolving Dirac impulses placed by a Poisson point process with the Gabor kernel as shown in figure \ref{fig:gaborNoise}. The Gabor kernel $g$ is defined as
 $$
 g(\vec{x}) = e^{\frac{||\vec{x}||}{\sigma^2}}\cdot \cos{(f\langle\vec{u},\vec{x}\rangle)}
 $$
-where $f$ and $\vec{u}$ are frequency and direction of the kernel. Since the other operand of the convolution is a sum of offset Dirac impulses, the convolution deteriorates to a sum of offset versions of the kernel. An instance of Gabor Noise $G$ can therefore be represented as
+where $f$ and $\vec{u}$ are frequency and direction of the kernel and $\sigma$ represents its width like it does for a Gaussian function. Since the other operand of the convolution is a sum of offset Dirac impulses, the convolution deteriorates to a sum of offset versions of the kernel. An instance of Gabor Noise $G$ can therefore be represented as
 $$
 G(\vec{x}) = \sum_ig(\vec{x}-\vec{p}_i)
 $$
@@ -75,11 +76,8 @@ where $f$ and $\vec{u}$ are again the frequency and direction of the main oscill
 \subsection{Stripes Patterns on Surfaces}
 In section \textcolor{red}{missing} we will see, that we need a function, defined on a mesh, that increases with a direction and speed determined by a vector field. We need this function to generate a stripe pattern by plugging it into a periodic function. As \citeauthor{stripes} already note, this is not alway trivial, even for a simple plane, as vector fields with non-zero curl are non integrable. In \cite{stripes} they provide a solution by deriving an equality constraint, that they than relax to a minimization. While necessary to receive a solution, it unfortunately allows new Singularities to emerge, which is obviously necessary, when considering a objects whose width varies along the stripe direction. As the width the stripes have to cover increases, either the number of stripes needs to increase, or the stripe frequency needs to drop. For our purposes one could replace their work with another way to generate a function that fulfills this purpose, but here we will use their work.
 
-\section{Phase Generation}
-\subsection{The constant case}
+\section{The constant case}
 We will first look at a simple case. This case corresponds to the bilobe case of Phasor Noise. This means a constant oscillation direction and frequency. However before we start out, we will define a third type of artifact besides singularities and rips: wobble. Comparing the areas of a Phasor Sine Wave with a regular Sine Wave, we find, that the lines are not perfectly straight. We will refer to this fact as wobble from no on. From section \ref{sec:phasorNoise} we recall that in this case Phasor Noise consists of two parts: A function increasing in a given direction and a phase offset. Figure \ref{fig:phasorNoisePhase} shows a Phasor Noise instance as well as its phase offset. Comparing the phase from figure \ref{fig:phasorNoisePhase} with figure \ref{fig:phasorNoise} we can easily find a correspondence between artifacts of the Phasor Sine Wave and feature of the phase. The existence of wobble is caused by the fact, that the phase is not constant even in areas, where there are no other artefacts present. \citeauthor{phasorNoise} already identify that rips are caused by sudden value changes in the phase offset, while singularities are located at points around which the phase offset rotates abruptly.\\
-
-This defines our goal. For a set of points $s_i$, at which we want singularities to occur and a set of line segments $l_i$, along which we want rips to occur, we want to construct a varying phase offset $\varphi_c$ that suddenly changes when crossing any $l_i$ and abruptly rotates around all $s_i$.
 
 \begin{figure}[h]
   \centering
@@ -88,7 +86,14 @@ This defines our goal. For a set of points $s_i$, at which we want singularities
   \caption{Phasor Noise (left) and its phase offset (right). Angle is mapped to hue.}\label{fig:phasorNoisePhase}
 \end{figure}
 
+This defines our goal. For a set of points $s_i$, at which we want singularities to occur and a set of line segments $l_i$, along which we want rips to occur, we want to construct a varying phase offset $\varphi_c$ that suddenly changes when crossing any $l_i$ and abruptly rotates around all $s_i$. Since this is a phase offset the numbers are considered module $2\pi$. Since wobble is the artifact most characteristic for Phasor Noise, we will assume that wobble is present in all applications, which will become relevant in section \textcolor{red}{missing}.
+
+\subsection{Wobble}
+The first artifact kind we will have a look at is wobble. As already mentioned, wobble is created by a non-zero non-constant phase. Since we are creating noise, we want this to be governed by randomness. Taking another look at figure \ref{fig:phasorNoisePhase}, we can not identify any obvious anisotropy. Therefore any noise algorithm whose appearance is not obviously anisotropic will be sufficient to create a similar appearance to Phasor Noise. An important to note is, that we do not use the fact, that the output domain is cyclic. There are two reasons for this is. The first is, that there is a multitude of noise algorithms with an equally large set of properties, that output to the real domain between $-1$ and $1$.\\
+The other, more important one is that it is harder to ensure the absence of singularities when using a cyclic output domain. Take for example a simple algorithm that is based on an integer lattice and at each point of this lattice determines a random number and interpolates between them. Since we are using angles these random numbers will be between $0$ and $2\pi$. We are on a cyclic domain, so the interpolation will check if the points are nearer when using the normal difference or if they are nearer when computing the difference over the $0$/$2\pi$ boundary and choose the interpolation direction accordingly.
+
 \printbibliography
+
 
 \end{document}
 
