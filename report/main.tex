@@ -2,6 +2,7 @@
 
 \usepackage[style=numeric]{biblatex}
 \addbibresource{bibliography.bib}
+\usepackage{amsmath}
 
 % Values for title generation
 \title{Controlling Phasor Noise Artifacts}
@@ -49,7 +50,7 @@ where $\vec{p}_i$ are the positions of the Dirac Impulses. \citeauthor{gaborNois
   \centering
   \includegraphics[width=0.45\linewidth]{images/gaborKernel}
   \includegraphics[width=0.45\linewidth]{images/gaborNoise}
-  \caption{An instance of the Gabor Kernel (left) and an Instance of Gabor Noise (right). Note the low contrast areas (marked).}\label{fig:gaborNoise}
+  \caption{An instance of the Gabor Kernel (left) and an instance of Gabor Noise (right). Note the low contrast areas (marked).}\label{fig:gaborNoise}
 
 \end{figure}
 
@@ -86,11 +87,48 @@ We will first look at a simple case. This case corresponds to the bilobe case of
   \caption{Phasor Noise (left) and its phase offset (right). Angle is mapped to hue.}\label{fig:phasorNoisePhase}
 \end{figure}
 
-This defines our goal. For a set of points $s_i$, at which we want singularities to occur and a set of line segments $l_i$, along which we want rips to occur, we want to construct a varying phase offset $\varphi_c$ that suddenly changes when crossing any $l_i$ and abruptly rotates around all $s_i$. Since this is a phase offset the numbers are considered module $2\pi$. Since wobble is the artifact most characteristic for Phasor Noise, we will assume that wobble is present in all applications, which will become relevant in section \textcolor{red}{missing}.
+This defines our goal. For a set of points $\vec{s}_i$, at which we want singularities to occur and a set of line segments $l_i$, along which we want rips to occur, we want to construct a varying phase offset $\varphi_c$ that suddenly changes when crossing any $l_i$ and abruptly rotates around all $\vec{s}_i$. Since this is a phase offset the numbers are considered module $2\pi$. Since wobble is the artifact most characteristic for Phasor Noise, we will assume that wobble is present in all applications, which will become relevant in section \textcolor{red}{missing}.
 
-\subsection{Wobble}
-The first artifact kind we will have a look at is wobble. As already mentioned, wobble is created by a non-zero non-constant phase. Since we are creating noise, we want this to be governed by randomness. Taking another look at figure \ref{fig:phasorNoisePhase}, we can not identify any obvious anisotropy. Therefore any noise algorithm whose appearance is not obviously anisotropic will be sufficient to create a similar appearance to Phasor Noise. An important to note is, that we do not use the fact, that the output domain is cyclic. There are two reasons for this is. The first is, that there is a multitude of noise algorithms with an equally large set of properties, that output to the real domain between $-1$ and $1$.\\
-The other, more important one is that it is harder to ensure the absence of singularities when using a cyclic output domain. Take for example a simple algorithm that is based on an integer lattice and at each point of this lattice determines a random number and interpolates between them. Since we are using angles these random numbers will be between $0$ and $2\pi$. We are on a cyclic domain, so the interpolation will check if the points are nearer when using the normal difference or if they are nearer when computing the difference over the $0$/$2\pi$ boundary and choose the interpolation direction accordingly.
+\subsection{Wobble}\label{sec:wobble}
+The first artifact kind we will have a look at is wobble. As already mentioned, wobble is created by a non-constant phase. Since we are creating noise, we want this to be governed by randomness. Taking another look at figure \ref{fig:phasorNoisePhase}, we can not identify any obvious anisotropy. Therefore any noise algorithm whose appearance is not obviously anisotropic will be sufficient to create a similar appearance to Phasor Noise. An important to note is, that we do not use the fact, that the output domain is cyclic. There are two reasons for this is. The first is, that there is a multitude of noise algorithms with an equally large set of properties, that output to the real domain between $-1$ and $1$.\\
+The other, more important one is that it is harder to ensure the absence of singularities when using a cyclic output domain. Take for example a simple algorithm that is based on an integer lattice and at each point of this lattice determines a random number and interpolates between them. Since we are using angles these random numbers will be between $0$ and $2\pi$. We are on a cyclic domain, so the interpolation will check if the points are nearer when using the normal difference or if they are nearer when computing the difference over the $0$/$2\pi$ boundary and choose the interpolation direction accordingly. We will now construct a possible case, where this algorithm will create singularity. This case is also shown in figure \ref{fig:simpleAlgirithmSingularity}. For this case choose a grid cell $C$ and its four corner points $p_1$, $p_2$, $p_3$ and $p_4$ in such a way, that $(p_1,p_2,p_3,p_4,p_1)$ moves along the edges around the cell. Now let the algorithm pick $0$, $\frac{\pi}{2}$,$\pi$ and $\frac{3\pi}{2}$ for $p_1$, $p_2$, $p_3$ and $p_4$ respectively. Since we interpolate on a cyclic domain, the points on the edge $(p_4,p_1)$ will be assigned value interpolated between $\frac{3\pi}{2}$ and $0$. We therefore created a path with a winding number of $1$ and therefore according to \textcolor{red}{some source} this path contains a singularity. Note, that this problem is not easily fixed, without removing the cyclic interpolation.\\
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/simpleAlgo}
+  \caption{A simple noise algorithm creating a singularity on a cyclic domain. The circles represent the points of the lattice while in between them the interpolation is shown. The rest shows possible values for the domain. Angle is again mapped to hue.}\label{fig:simpleAlgirithmSingularity}
+\end{figure}
+Therefore we will stick with algorithms outputting to the classic domain of $[-1,1]$. The actual phase offset is of course still in the cyclic domain on $[0,2\pi)$, so a value of minus one would wrap around to create the value $2\pi - 1$. When more or less wobble is needed these numbers can of course be rescaled to fit the specific needs. Figure \ref{fig:wobble} shows a Phasor Sine Wave with a phase offset applied. This phase offset is generated using a simple hierarchical algorithm, that uses cosine interpolation between lattice points. Note, that while there is an obvious difference in the phase offset used in figure \ref{fig:wobble} and the phase obtained from real Phasor Noise as shown in figure \ref{fig:phasorNoisePhase}, there is no noticeable difference in wobble when applied to a Phasor Sine Wave as shown in figure \ref{fig:phasorNoise}.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/wobble}
+  \includegraphics[width=0.45\linewidth]{images/wobblePhase}
+  \caption{An artificially created Phasor Sine Wave (left) without any artifacts except for wobble and its phase offset (right).}\label{fig:wobble}
+\end{figure}
+When using the function $w(\vec{x})$ to compute the phase offset causing the wobble, we can represent our constructed phase offset as $\varphi_c(\vec{x}) = w(\vec{x})$.
+
+\subsection{Singularities}
+As we already found, singularities are located at points, where the phase offset rotates rapidly. To construct singularities, we therefore need to construct these points in the phase offset. To achieve this, we will (literally) add another component to the generated phase offset. Given the polar coordinates $(r, \theta)$ of a point $\vec{x}$ we can use the function
+$$
+atan(\vec{x}) = \begin{cases}
+  0 & \text{if } r = 0\\
+  \theta &\text{otherwise}
+\end{cases}
+$$
+Figure \ref{fig:singularities} shows this function as well as its impact when used as a phase offset for a sine wave. It also shows $-atan(\vec{x})$ and its impact when used as phase offset. We can clearly see a difference in Phasor Sine Wave. Along the direction from the top left to the bottom right, $atan(\vec{x})$ leads to an additional line, while $-atan(\vec{x})$ removes a line. This clearly indicates a need to differentiate between the two. We will call the first one a right singularity, while we will call the second one a left singularity. Recalling from our goal, we want singularities at points $\vec{s}_i$. Since we now need to differentiate between the two types of singularities, we will continue to denote points of right singularities by $\vec{s}_i$, while we will denote points with left singularities by $\vec{t}_i$. Using this, we can expand our constructed phase by to 
+$$
+\varphi_c(\vec{x}) = w(\vec{x}) + \sum_i atan(\vec{x}-\vec{s_i}) - \sum_j atan(\vec{x}-\vec{t_j})
+$$
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.23\linewidth]{images/rightSingularityPhase}
+  \includegraphics[width=0.23\linewidth]{images/rightSingularity}
+  \includegraphics[width=0.23\linewidth]{images/leftSingularityPhase}
+  \includegraphics[width=0.23\linewidth]{images/leftSingularity}
+  \caption{A simple way to add a single singularity to a sine wave. In order: Phase offset of right singularity, right singularity in Phasor Sine Wave, phase offset of left singularity, left singularity in Phasor Sine Wave. Both Phasor Sine Waves are without wobble. For the phase offsets angle is mapped to hue.}\label{fig:singularities}
+\end{figure}
+
+One important thing to note is the fact, that this means, that for each point we need to evaluate each of the singularity terms. For large images with a lot of singularities this will slow down the evaluation a lot.
+
 
 \printbibliography
 
