@@ -114,7 +114,7 @@ atan(\vec{x}) = \begin{cases}
   \theta &\text{otherwise}
 \end{cases}
 $$
-Figure \ref{fig:singularities} shows this function as well as its impact when used as a phase offset for a sine wave. It also shows $-atan(\vec{x})$ and its impact when used as phase offset. We can clearly see a difference in Phasor Sine Wave. Along the direction from the top left to the bottom right, $atan(\vec{x})$ leads to an additional line, while $-atan(\vec{x})$ removes a line. This clearly indicates a need to differentiate between the two. We will call the first one a right singularity, while we will call the second one a left singularity. Recalling from our goal, we want singularities at points $\vec{s}_i$. Since we now need to differentiate between the two types of singularities, we will continue to denote points of right singularities by $\vec{s}_i$, while we will denote points with left singularities by $\vec{t}_i$. Using this, we can expand our constructed phase by to 
+Figure \ref{fig:singularities} shows this function as well as its impact when used as a phase offset for a sine wave. It also shows $-atan(\vec{x})$ and its impact when used as phase offset. We can clearly see a difference in Phasor Sine Wave. Along the direction from the top left to the bottom right, $atan(\vec{x})$ leads to an additional line, while $-atan(\vec{x})$ removes a line. This clearly indicates a need to differentiate between the two. We will call the first one a right singularity, while we will call the second one a left singularity. Recalling from our goal, we want singularities at points $\vec{s}_i$. Since we now need to differentiate between the two types of singularities, we will continue to denote points of right singularities by $\vec{s}_i$, while we will denote points with left singularities by $\vec{t}_i$. Using this, we can expand our constructed phase to
 $$
 \varphi_c(\vec{x}) = w(\vec{x}) + \sum_i atan(\vec{x}-\vec{s_i}) - \sum_j atan(\vec{x}-\vec{t_j})
 $$
@@ -127,7 +127,25 @@ $$
   \caption{A simple way to add a single singularity to a sine wave. In order: Phase offset of right singularity, right singularity in Phasor Sine Wave, phase offset of left singularity, left singularity in Phasor Sine Wave. Both Phasor Sine Waves are without wobble. For the phase offsets angle is mapped to hue.}\label{fig:singularities}
 \end{figure}
 
-One important thing to note is the fact, that this means, that for each point we need to evaluate each of the singularity terms. For large images with a lot of singularities this will slow down the evaluation a lot.
+One important thing to note is the fact, that this means, that for each point we need to evaluate each of the singularity terms. For large images with a lot of singularities this will slow down the evaluation a lot. In such cases it is common practice to fade out the effects of a local change using a Gaussian function. Once the Gaussian is sufficiently small, the local change can be ignored. However, as figure \ref{fig:fadedSingularity} shows, this can not be applied here, because our defined function relies on a continuity across the $0$/$2\pi$ boundary. Since the values at this boundary always have to be $0$ and $2\pi$ respectively, we can not simply fade this function out.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/fadedPhase}
+  \includegraphics[width=0.45\linewidth]{images/fadedPhaseSineWave}
+  \caption{Trying to fade out the phase offset to create a singularity using a Gaussian function. The phase offset (left) is no longer continuous, which leads to a rip in the sine wave (right). Angle is again mapped to hue.}\label{fig:fadedSingularity}
+\end{figure}
+However if we take a left and a right singularity and orient them in such a way, that their boundaries point towards each other, we no longer have this problem. The $0$/$2\pi$ border now has a defined end point. We will call such a pair of singularities a dual singularity. 
+\textcolor{red}{formula}
+We also subtract $\pi$ from this phase offset, to make one side dip down a little and the other one increase, instead of just on increasing. This is because to make room for an additional line, the other line shift slightly as can already be seen in figure \ref{fig:fadedSingularity} and is still visible in \ref{fig:dualSingularity}, which shows the phase offset for a dual singularity. However as already mentioned, we assume the existence of wobble, so this small offset is masked.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.3\linewidth]{images/dualSingularityPhase}
+  \includegraphics[width=0.3\linewidth]{images/dualSingularityFaded}
+  \includegraphics[width=0.3\linewidth]{images/dualSingularitySineWave}
+  \caption{The phase offset for a dual singularity (left), the offset for a dual singularity faded by a Gaussian (center) and the phase offset in a sine wave (right).}\label{fig:dualSingularity}
+\end{figure}
+
 
 
 \printbibliography
