@@ -25,7 +25,7 @@ float baseThing(vec2 x, vec2 s, vec2 t, int mehtod){
     vec2 normal = vec2(tang.y,-tang.x);
     float opposite = dot(toXN,normal);
 
-    return atan(opposite, adjacent);// * gauss2d(x-s,0.15);
+    return atan(opposite, adjacent) * gauss2d(x-s,0.15);
   } else if(nearestPoint == t){
     vec2 tang = -tTangent;
     vec2 toX = x - t;
@@ -34,7 +34,7 @@ float baseThing(vec2 x, vec2 s, vec2 t, int mehtod){
     float adjacent =  dot(toXN, tang);
     vec2 normal = vec2(-tang.y,tang.x);
     float opposite = dot(toXN,normal);
-    return atan(opposite, adjacent);// * gauss2d(x-t,0.15);
+    return atan(opposite, adjacent) * gauss2d(x-t,0.15);
   } else {
     //return dist < 0. ? 0. : M_PI;
 
@@ -44,8 +44,7 @@ float baseThing(vec2 x, vec2 s, vec2 t, int mehtod){
     float dns = sqrt(dot(ns,ns));
     float dnt = sqrt(dot(nt,nt));
 
-    //float gauss = gauss1d(dist, 0.15);
-    float gauss = 1.;
+    float gauss = gauss1d(dist, 0.15);
 
     if(dns < dnt){
       return atan(dist,-dns) * gauss;

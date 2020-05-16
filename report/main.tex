@@ -3,6 +3,7 @@
 \usepackage[style=numeric]{biblatex}
 \addbibresource{bibliography.bib}
 \usepackage{amsmath}
+\usepackage{placeins}
 
 % Values for title generation
 \title{Controlling Phasor Noise Artifacts}
@@ -49,7 +50,7 @@ G(\vec{x}) = \sum_ig(\vec{x}-\vec{p}_i),
 $$
 where $\vec{p}_i$ are the positions of the Dirac Impulses. \citeauthor{gaborNoise} also prescribe a random weight to each instance of the kernel. However, since this is not relevant for the following discussion, we omit it here for convenience. Figure \ref{fig:gaborNoise} shows an instance of Gabor Noise. The depicted instance is a bilobe instance. This name stems from the appearance of its power spectrum, which is two Gaussian lobes positioned at the frequency and direction of the used kernel. Using different kernels at different positions leads to a more varied appearance. Since the power spectra add up (and are rescaled) this permits to specify a custom power spectrum. Besides this amount of control Gabor noise can of course be extended from two to three dimensions. However, \citeauthor{gaborNoise} also present a way to generate Gabor Noise directly on the surface of objects, which allows for seamless texturing.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.45\linewidth]{images/gaborKernel}
   \includegraphics[width=0.45\linewidth]{images/gaborNoise}
@@ -71,7 +72,7 @@ G(\vec{x}) = I(\vec{x})\sin{(f\langle\vec{x},\vec{u}\rangle + \varphi(\vec{x}))}
 $$
 where $f$ and $\vec{u}$ are again the frequency and direction of the main oscillation. $I$ is the envelope of the function and $\varphi(\vec{x})$ is the local phase offset of the oscillating part. $I$ and $\varphi$ are defined in such a way, that this formulation is exactly equivalent to the corresponding Gabor Noise instance. The main tool they use to do this is Phasor addition, hence the name Phasor Noise. Now, like in our example, we can discard the envelope $I$ to obtain a normalized version of Gabor Noise. \citeauthor{phasorNoise} call this a Phasor sine wave. The actual Phasor Noise is the argument of the sine. Therefore, Phasor Noise itself can not be used directly, but can only be used as input for a periodic function. Because it is defined using its corresponding Gabor Noise instance, it inherits the desirable properties of Gabor Noise, namely being band limited and a surface noise formulation. However, as depicted in Figure \ref{fig:phasorNoise}, Phasor Noise exhibits several artifacts previously masked by the low contrast areas. There are two types of artifacts: singularities, where one stripe splits into two and what we will call rips, where the stripes are suddenly offset by some amount. With our method, control can be gained over these artifacts to allow for finer adjustments to the appearance of the noise.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \includegraphics[width = 0.45\linewidth]{images/phasorSineWave}
   \caption{A Phasor sine wave. Note the artifacts previously masked by the low contrast areas.}\label{fig:phasorNoise}
@@ -83,7 +84,7 @@ In Section \textcolor{red}{missing} we will see, that we need a function, define
 \section{The constant case}
 We will first look at a simple case. This case corresponds to the bilobe case of Phasor Noise. This means a constant oscillation direction and frequency. However, before we start out, we will define a third type of artifact besides singularities and rips: wobble. Comparing the areas of a Phasor sine wave with a regular sine wave, we find that the lines are not perfectly straight. We will refer to this fact as wobble from now on. From Section \ref{sec:phasorNoise} we recall that in this case Phasor Noise consists of two parts: A function increasing in a given direction and a phase offset. Figure \ref{fig:phasorNoisePhase} shows a Phasor Noise instance as well as its phase offset. Comparing the phase from Figure \ref{fig:phasorNoisePhase} with Figure \ref{fig:phasorNoise}, we can easily find a correspondence between artifacts of the Phasor sine wave and features of the phase. The existence of wobble is caused by the fact, that the phase is not constant even in areas, where there are no other artefacts present. \citeauthor{phasorNoise} already identify that rips are caused by sudden value changes in the phase offset, while singularities are located at points around which the phase offset rotates abruptly.\\
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.45\linewidth]{images/phasorNoise}
   \includegraphics[width=0.45\linewidth]{images/phasorPhase}
@@ -123,7 +124,7 @@ Figure \ref{fig:singularities} shows this function as well as its impact when us
 $$
 \varphi_c(\vec{x}) = w(\vec{x}) + \sum_i \atan(\vec{x}-\vec{s_i}) - \sum_j \atan(\vec{x}-\vec{t_j})
 $$
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.23\linewidth]{images/rightSingularityPhase}
   \includegraphics[width=0.23\linewidth]{images/rightSingularity}
@@ -133,7 +134,7 @@ $$
 \end{figure}
 
 One important thing to note is the fact, that this means, that for each point we need to evaluate each of the singularity terms. For large images with a lot of singularities, this will slow down the evaluation a lot. In such cases, it is common practice to fade out the effects of a local change using a Gaussian function. Once the Gaussian is sufficiently small, the local change can be ignored. However, as Figure \ref{fig:fadedSingularity} shows, this can not be applied here, because our defined function relies on a continuity across the $0$/$2\pi$ boundary. Since the values at this boundary always have to be $0$ and $2\pi$ respectively, we can not simply fade this function out.
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.45\linewidth]{images/fadedPhase}
   \includegraphics[width=0.45\linewidth]{images/fadedPhaseSineWave}
@@ -141,13 +142,13 @@ One important thing to note is the fact, that this means, that for each point we
 \end{figure}
 However if we take a left and a right singularity and orient them in such a way, that their boundaries point towards each other, we no longer have this problem, as shown in Figure \ref{fig:dualSingularity}. The $0$/$2\pi$ border now has a defined end point. We will call such a pair of singularities a dual singularity. For a pair of Singularities $s_i$ and $t_i$, we can add the following to our generated phase offset:
 $$
-d(\vec{x}) = (a(\vec{x})-\pi)b(\vec{x})
+d(\vec{x}) = ((a(\vec{x})-\pi)\ \mathrm{mod}\ 2\pi)\ b(\vec{x})
 $$
 with
 $$
   a(\vec{x}) = \begin{cases}
-  atan(\vec{x}-\vec{s_i}) - \theta, &\text{if }d_s < d_t\\
-  \pi - atan(\vec{x}-\vec{t_i}) + \theta, &\text{otherwise}
+  \atan(\vec{x}-\vec{s_i}) - \theta, &\text{if }d_s < d_t\\
+  \pi - \atan(\vec{x}-\vec{t_i}) + \theta, &\text{otherwise}
   \end{cases}
 $$
 and
@@ -158,11 +159,9 @@ $$
     e^{\frac{d_l^2}{\sigma^2}}, &\text{otherwise}\\
   \end{cases},
 $$
-where $\theta=atan(\vec{t_i}-\vec{s_i})$, $d_s$, $d_t$ and $d_l$ are the distances to $s_i$, $t_i$ and the line connecting the two respectively and $\sigma$ determines the speed at which the dual singularity is faded out. 
-\textcolor{red}{formula}
-Note, that we subtract $\pi$ from this phase offset, to make one side dip down a little, while the other one increase, instead of just one increasing by twice as much. We do this, because to make room for an additional line, the other lines shift slightly as can already be seen in Figure \ref{fig:fadedSingularity} and is still visible in Figure \ref{fig:dualSingularity}. However, we assume the existence of wobble, which masks this small offset.
+where $\theta=\atan(\vec{t_i}-\vec{s_i})$, $d_s$, $d_t$ and $d_l$ are the distances to $s_i$, $t_i$ and the line connecting the two respectively and $\sigma$ determines the speed at which the dual singularity is faded out. Note, that we subtract $\pi$ from this phase offset, to make one side dip down a little, while the other one increase, instead of just one increasing by twice as much. We do this, because to make room for an additional line, the other lines shift slightly as can already be seen in Figure \ref{fig:fadedSingularity} and is still visible in Figure \ref{fig:dualSingularity}. However, we assume the existence of wobble, which masks this small offset.
 
-\begin{figure}[h]
+\begin{figure}[ht]
   \centering
   \includegraphics[width=0.3\linewidth]{images/dualSingularityPhase}
   \includegraphics[width=0.3\linewidth]{images/dualSingularityFaded}
@@ -170,8 +169,62 @@ Note, that we subtract $\pi$ from this phase offset, to make one side dip down a
   \caption{The phase offset for a dual singularity (left), the offset for a dual singularity faded by a Gaussian (center) and the phase offset in a sine wave (right).}\label{fig:dualSingularity}
 \end{figure}
 
+Using dual singularities we can expand our constructed phase offset to
+\begin{align*}
+  \varphi_c(\vec{x})&=w(\vec{x}) +\sum_i d_i(\vec{x})\\
+  & + \sum_j \atan(\vec{x}-\vec{s}_j) - \sum_k \atan(\vec{x}-\vec{t_k})
+\end{align*}
+We use $d_i$ to reference the function to create a dual singularity adapted to $s_i$ and $t_i$. We add the terms for single singularities as there might be a different number of right and left singularities or the use case does not permit the optimization of pairing up all singularities. In an optimal case one of these sums equals $0$, as there are no summands.
+
+\subsection{Rips}
+Rips are caused by a large change in the phase offset. When trying to fade out a single singularity, we already saw, that scaling a $0$/$2\pi$ step creates a large change in phase and by extension a rip. However, when using this technique to create rips, one of the end points can not be controlled easily. In $d(\vec{x})$ we already created a function that creates a $0$/$2\pi$ step along a line connecting to points. Therefore for a line $l_i$ representing the position for a rip, we can use the corresponding $d_i$ rescaled by a weight $o_i$. Figure \ref{fig:ripPhase} shows the phase of a rip, while Figure \ref{fig:ripWeight} shows the effect the weight has on the rip.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/ripPhase}
+  \includegraphics[width=0.45\linewidth]{images/rip05}
+  \caption{The phase offset for a rip with a weight of $0.5$ (left) and its impact on a sine wave (right).}\label{fig:ripPhase}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.3\linewidth]{images/rip01}
+  \includegraphics[width=0.3\linewidth]{images/rip05}
+  \includegraphics[width=0.3\linewidth]{images/rip09}
+  \caption{A rip with a weight of $0.1$ (left), one with a weight of $0.5$ (center) and one with a weight of $0.9$ (right). The low weight of the first rip leads to an almost negligible rip, while the medium weight of the second leads to the maximum difference between the sides of the rip. The large weight of the last also leads to only a small offset, however the rip is framed by singularities on both sides.}\label{fig:ripWeight}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/ripChainingPhase}
+  \includegraphics[width=0.45\linewidth]{images/ripChaining}
+  \caption{Multiple rips chained together to form a square. \textcolor{red}{is it ok to not state what the images are at this point??}}\label{fig:ripChaining}
+\end{figure}
+
+As Figure \ref{fig:ripChaining} rips can be chained without additional artifacts to generate more complex shapes.\\
+Using this, we can once again expand our constructed phase offset:
+\begin{align*}
+  \varphi_c(\vec{x})&=w(\vec{x}) +\sum_i d_i(\vec{x})\\
+  & + \sum_j \atan(\vec{x}-\vec{s}_j) - \sum_k \atan(\vec{x}-\vec{t_k})\\
+  & + \sum_l w_l\cdot d_l(\vec{x}),
+\end{align*}
+where $d_l$ is the dual singularity function corresponding to the endpoints of $l_l$ and $w_l$ is the weight for $l_l$.\\
+\\
+For demonstration purposes, we always used only one artifact type at a time, however the different artifact type can be freely combined as Figure \ref{fig:combiningArtifacts} shows.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/combiningArtifacts}
+  \caption{A combination of multiple artifacts. This combination does not create any unwanted artifacts.}\label{fig:combiningArtifacts}
+\end{figure}
 
 
+
+\section{The non-constant case}
+
+
+
+\FloatBarrier
 \printbibliography
 
 

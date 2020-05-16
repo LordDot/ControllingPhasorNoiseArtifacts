@@ -31,3 +31,12 @@ struct baseThingConfig{
   vec2 sTangent;
   vec2 tTangent;
 };
+
+        float gauss1d(float x, float sigma){
+          return exp(-x*x/(sigma*sigma));
+        }
+
+        float gauss2d(vec2 x, float sigma){
+          return exp(-dot(x,x)/(sigma*sigma));
+        }
+
