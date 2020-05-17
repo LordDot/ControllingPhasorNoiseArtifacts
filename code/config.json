@@ -68,7 +68,7 @@
     }
   },
   "artifacts":[
-    {
+   /* {
       "type":"rip",
       "x1":0.25,
       "y1":0.25,
@@ -97,9 +97,9 @@
       "y1":0.5,
       "x2":0.75,
       "y2":0.5
-    }
+    }*/
   ],
-  "fragment": "fragment.shader",
-  "vertex": "vertex.shader",
+  "fragment": "stripeFragment.shader",
+  "vertex": "stripeVertex.shader",
   "out": "build/bundeledShader.shader"
 }

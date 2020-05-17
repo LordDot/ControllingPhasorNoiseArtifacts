@@ -50,7 +50,11 @@ public class ShaderBundler {
         out.write("#ifdef VERTEX\n");
         in = new BufferedReader(new FileReader(vertexShader));
         while((line = in.readLine()) != null){
-            out.write(line + "\n");
+            if(line.trim().equals("{ARTIFACTS}")){
+                out.write(getArtifactsString());
+            }else {
+                out.write(line + "\n");
+            }
         }
         in.close();
 

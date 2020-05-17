@@ -79,9 +79,9 @@ where $f$ and $\vec{u}$ are again the frequency and direction of the main oscill
 \end{figure}
 
 \subsection{Stripes Patterns on Surfaces}
-In Section \textcolor{red}{missing} we will see, that we need a function, defined on a mesh, that increases with a direction and speed determined by a vector field. We need this function to generate a stripe pattern by plugging it into a periodic function. As stated in \cite{stripes}, this is not always trivial, even for a simple plane, as vector fields with non-zero curl are non-integrable. \cite{stripes} provides a solution by deriving an equality constraint, which is then relaxed to a minimization. While necessary to receive a solution, it unfortunately allows new singularities to emerge, which is obviously necessary, when considering an object whose width varies along the stripe direction. As the width the stripes have to cover increases, either the number of stripes needs to increase, or the stripe frequency needs to drop. For our application one could replace their work with another way to generate a function that fulfills this purpose, but here we will use their work.
+In Section \ref{sec:stripes} we will see, that we need a function, defined on a mesh, that increases with a direction and speed determined by a vector field. We need this function to generate a stripe pattern by plugging it into a periodic function. As stated in \cite{stripes}, this is not always trivial, even for a simple plane, as vector fields with non-zero curl are non-integrable. \cite{stripes} provides a solution by deriving an equality constraint, which is then relaxed to a minimization. While necessary to receive a solution, it unfortunately allows new singularities to emerge, which is obviously necessary, when considering an object whose width varies along the stripe direction. As the width the stripes have to cover increases, either the number of stripes needs to increase, or the stripe frequency needs to drop. For our application one could replace their work with another way to generate a function that fulfills this purpose, but here we will use their work.
 
-\section{The constant case}
+\section{The constant Case}
 We will first look at a simple case. This case corresponds to the bilobe case of Phasor Noise. This means a constant oscillation direction and frequency. However, before we start out, we will define a third type of artifact besides singularities and rips: wobble. Comparing the areas of a Phasor sine wave with a regular sine wave, we find that the lines are not perfectly straight. We will refer to this fact as wobble from now on. From Section \ref{sec:phasorNoise} we recall that in this case Phasor Noise consists of two parts: A function increasing in a given direction and a phase offset. Figure \ref{fig:phasorNoisePhase} shows a Phasor Noise instance as well as its phase offset. Comparing the phase from Figure \ref{fig:phasorNoisePhase} with Figure \ref{fig:phasorNoise}, we can easily find a correspondence between artifacts of the Phasor sine wave and features of the phase. The existence of wobble is caused by the fact, that the phase is not constant even in areas, where there are no other artefacts present. \citeauthor{phasorNoise} already identify that rips are caused by sudden value changes in the phase offset, while singularities are located at points around which the phase offset rotates abruptly.\\
 
 \begin{figure}[ht]
@@ -220,8 +220,58 @@ For demonstration purposes, we always used only one artifact type at a time, how
 
 
 
-\section{The non-constant case}
+\section{The non-constant Case}
+In this case non-constant case refers to the stripe direction and frequency. The main difficulty with this is to find a base function, that increases orthogonally to the stripe direction, that can be used as a basis for the phase. In general this function is the integral of the direction field. In the constant case this direction field was constant, so the integral was a linear function. However, not all vector fields are integrable and therefore we need to differentiate between the two cases.
 
+\subsection{Integrable Direction Field}
+This is the simpler case of the two. Knowing a function whose derivative is the direction field we want to use makes it possible to use all the things we went over in the previous sections. For the integral $I(\vec{x})$ of the direction field, we can replace the linear function $f\langle\vec{x},\vec{u}\rangle$ with $I(x)$ to receive:
+$$
+P_c(\vec{x}) = \sin(I(\vec{x})+\varphi_c(\vec{x}))
+$$
+Figure \ref{fig:parabola} shows a Phasor nose instance using the direction field
+$$
+d(\vec{x}) = \begin{pmatrix}
+2x_1+x_2^2\\
+x_1^2+2x_2
+\end{pmatrix},
+$$
+which integrates to
+$$
+I(\vec{x}) = \langle \vec{x},\vec{x} \rangle.
+$$
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/paraboloidDir}
+  \caption{A constructed Phasor noise instance using the derivative of a parabola as direction field.}\label{fig:parabola}
+\end{figure}
+
+\subsection{Non-integrable Direction Field}\label{sec:stripes}
+In this case we can not simply integrate the direction field to obtain the base for the sine wave. However, \cite{stripes} develops a substitute for this base function, we will call $f(\vec{x})$. The technique already presents a way to prescribe singularities, so we will not have a look at singularities in this section. Even if we do not add any singularities, some direction fields require some, so it may not be possible to avoid them. Another major limitation of this technique is the requirement to use an oscillation profile, that is symmetric to the $y$-axis. We can try to use a cosine based oscillation instead of a sine based one, however, since adding a phase to a cosine is equal to shifting it along the $x$-axis, we can not add a phase offset without creating artifacts in the image.\\
+One method to create a base function, we can use, is to create a low frequency oscillation and create a symmetric, but locally different function. Another way to express this approach is to use one period of the created function to create multiple stripes in the output. However, as Figure \ref{fig:multiStripe} shows, this massively amplifies the effect of the already existing singularities. Apart from this, this approach can be used as the others, so we will not discuss it further.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/multiStripe}
+  \includegraphics[width=0.45\linewidth]{images/multiStripeMulti}
+  \caption{A low frequency stripe pattern with varying direction and wobble (left) and the pattern extended to create multiple stripes per period (right).}\label{fig:multiStripe}
+\end{figure}
+
+Another approach is try to adapt the techniques we developed so far to work with these limitations. However, as we will see, this too will not be as successful as the constant case. As before, the first artifact we will have a look at is wobble. We apply a simple trick to ensure the symmetry of our function. The first thing we do is to take the absolute value of $f$. We will now add wobble as we did before. The result is shown in Figure \ref{fig:multiDirWobble}. Instead of the lines moving to one side, they actually vary in width. This is because we do not now on which side of the peak we are, so we can either add or subtract from both. Of course the actual value varies, but since the wobble phase offset is continuous, in a local area, it either one or the other.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/multiDirWobble}
+  \caption{Adding wobble does not move the lines, but causes them to vary in width.}\label{fig:multiDirWobble}
+\end{figure}
+
+The other artifact type we will have a look at is rips. Having a look at Figure \ref{fig:multiDirRip}, it is apparent, that again the forced symmetry is problematic, as the lines to not shift to create an offset, but vary in width. It still creates something akin to a rip.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/multiDirRip}
+  \caption{Creating a rip in an environment with a non-integrable direction field. The line do not shift to create an opposition, but vary in width.}\label{fig:multiDirRip}
+\end{figure}
 
 
 \FloatBarrier

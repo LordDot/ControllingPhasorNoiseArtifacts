@@ -32,6 +32,7 @@
         }
 
         in vec2 textureCoordinates;
+        in vec3 color;
 
         void main(){
           vec2 uv = textureCoordinates;
@@ -46,9 +47,7 @@
 
           float phi = 0.;
           //phi += _f*dot(uv, dir)*(2.*M_PI);
-          phi += 200*dot(uv-0.5, uv-0.5);
-          phi += 15.0* evalHirarchNoise(uv);
-          {ARTIFACTS}
+          //phi += 15.0* evalHirarchNoise(uv);
 
           vec3 phasorfield  = true
             ? vec3(sin(phi)*0.5 +0.5)                              //figure3 a
@@ -60,6 +59,6 @@
           fragColor = vec4(phasorfield,1.0);
           //fragColor = vec4(dir, 0.0, 1.0);
           //fragColor = vec4(vec3(baseThing(uv,vec2(0.25, 0.5),vec2(0.75,0.5)))/(2.*M_PI) +0.5,1.0);
-          gl_FragColor = fragColor;
-          //gl_FragColor = vec4(hsv2rgb(vec3(phi/(2*M_PI),1.,1.)),1.0);
+          //gl_FragColor = fragColor;
+          gl_FragColor=vec4(color, 1.);
         }
