@@ -91,7 +91,7 @@ We will first look at a simple case. This case corresponds to the bilobe case of
   \caption{Phasor Noise (left) and its phase offset (right). Angle is mapped to hue.}\label{fig:phasorNoisePhase}
 \end{figure}
 
-This defines our goal: For a set of points $\vec{s}_i$, at which we want singularities to occur and a set of line segments $l_i$, along which we want rips to occur, we want to construct a varying phase offset $\varphi_c$ that suddenly changes when crossing any $l_i$ and abruptly rotates around all $\vec{s}_i$. Since, this is a phase offset the numbers are considered modulo $2\pi$. Since wobble is the artifact most characteristic for Phasor Noise, we will assume that wobble is present in all applications, which will become relevant in Section \textcolor{red}{missing}. \textcolor{red}{overview}
+This defines our goal: For a set of points $\vec{s}_i$, at which we want singularities to occur and a set of line segments $l_i$, along which we want rips to occur, we want to construct a varying phase offset $\varphi_c$ that suddenly changes when crossing any $l_i$ and abruptly rotates around all $\vec{s}_i$. Since, this is a phase offset the numbers are considered modulo $2\pi$. Since wobble is the artifact most characteristic for Phasor Noise, we will assume that wobble is present in all applications, which will become relevant in Section \ref{sec:singularities}, where we will have a look at how to create singularities. How to actually create wobble will be explained in Section \ref{sec:wobble}. The last artifact type, that is still missing is rips, which will be explored in Section \ref{sec:rips}. After that we will have a look at adaption these methods to an environment with a non-constant direction field in Section \ref{sec:nonConstant}. Following this is Section \ref{sec:results}, where we will present some applications of the developed methods.
 
 \subsection{Wobble}\label{sec:wobble}
 The first kind of artifact we will have a look at is wobble. As already mentioned, wobble is created by a non-constant phase. Since we are creating noise, we want this to be governed by randomness. Taking another look at Figure \ref{fig:phasorNoisePhase}, we can not identify any obvious anisotropy. Therefore any noise algorithm whose appearance is not obviously anisotropic will be sufficient to create a similar appearance to Phasor Noise. An important thing to note is, that this algorithm does not use the fact, that the output domain is cyclic. There are two reasons for this: The first is, that there is a multitude of noise algorithms with an equally large set of properties, that output to the real domain between $-1$ and $1$.\\
@@ -112,7 +112,7 @@ Therefore, we will stick with algorithms outputting to the classic domain of $[-
 \end{figure}
 When using the function $w(\vec{x})$ to compute the phase offset causing the wobble, we can represent our constructed phase offset as $\varphi_c(\vec{x}) = w(\vec{x})$.
 
-\subsection{Singularities}
+\subsection{Singularities}\label{sec:singularities}
 As we already found, singularities are located at points, where the phase offset rotates rapidly. To construct singularities, we therefore need to construct such points in the phase offset. To achieve this, we will (literally) add another component to the generated phase offset. Given the polar coordinates $(r, \theta)$ of a point $\vec{x}$ we can use the function
 $$
 \atan(\vec{x}) = \begin{cases}
@@ -176,7 +176,7 @@ Using dual singularities we can expand our constructed phase offset to
 \end{align*}
 We use $d_i$ to reference the function to create a dual singularity adapted to $s_i$ and $t_i$. We add the terms for single singularities as there might be a different number of right and left singularities or the use case does not permit the optimization of pairing up all singularities. In an optimal case one of these sums equals $0$, as there are no summands.
 
-\subsection{Rips}
+\subsection{Rips}\label{sec:rips}
 Rips are caused by a large change in the phase offset. When trying to fade out a single singularity, we already saw, that scaling a $0$/$2\pi$ step creates a large change in phase and by extension a rip. However, when using this technique to create rips, one of the end points can not be controlled easily. In $d(\vec{x})$ we already created a function that creates a $0$/$2\pi$ step along a line connecting to points. Therefore for a line $l_i$ representing the position for a rip, we can use the corresponding $d_i$ rescaled by a weight $o_i$. Figure \ref{fig:ripPhase} shows the phase of a rip, while Figure \ref{fig:ripWeight} shows the effect the weight has on the rip.
 
 \begin{figure}[ht]
@@ -220,7 +220,7 @@ For demonstration purposes, we always used only one artifact type at a time, how
 
 
 
-\section{The non-constant Case}
+\section{The non-constant Case}\label{sec:nonConstant}
 In this case non-constant case refers to the stripe direction and frequency. The main difficulty with this is to find a base function, that increases orthogonally to the stripe direction, that can be used as a basis for the phase. In general this function is the integral of the direction field. In the constant case this direction field was constant, so the integral was a linear function. However, not all vector fields are integrable and therefore we need to differentiate between the two cases.
 
 \subsection{Integrable Direction Field}
@@ -272,6 +272,37 @@ The other artifact type we will have a look at is rips. Having a look at Figure 
   \includegraphics[width=0.45\linewidth]{images/multiDirRip}
   \caption{Creating a rip in an environment with a non-integrable direction field. The line do not shift to create an opposition, but vary in width.}\label{fig:multiDirRip}
 \end{figure}
+
+\section{Results}\label{sec:results}
+Our technique naturally lends itself to applications Phasor noise useful in, especially if only some artifact type are wanted. Figure \ref{fig:mountains} shows a mountain range generated using wobble and randomly placed singularities. It also show how a prescribed rip can be used mimic offset in the terrain created by an earthquake. Figure \ref{fig:desert} also makes use of a prescribed rip to emulate sand dunes, that form around a sheet of glass. Another interesting application of rips is shown in Figure \ref{fig:bricks} where a constructed Phasor noise instance is used to create detail in a texture, that respect the existing boundaries of the texture.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\linewidth]{images/mountains}
+  \includegraphics[width=\linewidth]{images/mountainsRip}
+  \caption{A procedurally generated mountain range using wobble and singularities (top) and the same mountain range disturbed by an earthquake (bottom).}\label{fig:mountains}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\linewidth]{images/desert}
+  \caption{Procedurally generated dunes in a desert forming around a sheet of glass. Where the glass intersects the sand, a rip was placed to cause a discontinuity in the pattern.}\label{fig:desert}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=0.45\linewidth]{images/brick}
+  \includegraphics[width=0.45\linewidth]{images/brickSimple}
+  \includegraphics[width=0.45\linewidth]{images/brickRespecting}
+  \caption{Adding detail to a naively upscaled brick texture. The original texture (left) and a version with added naively detail (center). We can use rips to force discontinuities where the original texture suggests a change of material (right).}\label{fig:bricks}
+\end{figure}
+
+\section{Future Work}
+Despite the demonstrated use cases for constructed artifacts in Phasor noise and the lack thereof, there are still areas to explore. One of these areas is the non-constant case. While the integrable case works fine, the non-integrable case still needs more work. The main limitation is the fact, that asymmetric oscillation profiles are no possible. On one hand we could try to keep track of where in the period we are, to enable asymmetric oscillation profiles, while on the other hand we could try to adapt the methods described here to work with symmetric oscillation profiles. Finding a good way to work with the work presented in \cite{stripes} also enables the application of this approach to work as surface noise. While this leads to a need of texture coordinates to specify where on the objects artifact should appear, these do not have to be free of discontinuities, as they would only be used to for this purpose. Therefore, even simple algorithms to generate texture coordinates will do.\\
+Another avenue, that can be explored is an adaptation to work in higher dimensions, especially in an three dimensional environment. For the integrable case this is can be done by defining three dimensional equivalents to the artifact generation functions we defined here. The non-integrable case also requires the definition of a function, that can be used as a base for the oscillation.
+
+\section{Conclusion}
+In the integrable case we can now freely control the artifacts Phasor noise exhibits. This allows the automated creation of new types of content as we have seen. These additional automation opportunities will aid in the never ending fight against shorter development cycles.
 
 
 \FloatBarrier

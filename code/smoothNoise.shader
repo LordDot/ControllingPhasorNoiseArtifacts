@@ -52,7 +52,7 @@
           float cellSize = 0.35;
           for(int i = 0; i < 3; i++){
 
-            sum += amplitude * evalSmoothNoise(uv, cellSize);
+            sum += amplitude  * evalSmoothNoise(uv, cellSize);
 
             cellSize = cellSize / 1.5;
             amplitude = amplitude/2.;

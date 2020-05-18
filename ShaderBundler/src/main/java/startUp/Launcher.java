@@ -28,6 +28,7 @@ public class Launcher {
         }
         JsonArray includes = obj.get("includes").getAsJsonArray();
         String vertexShader = workingDir + obj.get("vertex").getAsString();
+        JsonElement geometryShader = obj.get("geometry");
         String fragmentShader = workingDir + obj.get("fragment").getAsString();
         String output = workingDir + obj.get("out").getAsString();
         List<File> includeFiles = new LinkedList<>();
@@ -39,7 +40,14 @@ public class Launcher {
         ArtifactReader reader = new ArtifactReader(artifactTypes);
         List<Artifact> artifacts = reader.getArtifacts(obj.get("artifacts").getAsJsonArray());
 
-        ShaderBundler sb = new ShaderBundler(new File(vertexShader), new File(fragmentShader), includeFiles, artifacts);
+        File geometryFile = null;
+        if (geometryShader != null) {
+            String geomFile = geometryShader.getAsString();
+            if (!(geomFile.equals(""))) {
+                geometryFile = new File(workingDir + geomFile);
+            }
+        }
+        ShaderBundler sb = new ShaderBundler(new File(vertexShader), geometryFile, new File(fragmentShader), includeFiles, artifacts);
         sb.bundle(new File(output));
     }
 

@@ -4,7 +4,8 @@
     "smoothNoise.shader",
     "angle.shader",
     "straight.shader",
-    "baseThing.shader"
+    "baseThing.shader",
+    "noise.shader"
   ],
   "artifactTypes":{
     "sing":{
@@ -68,38 +69,64 @@
     }
   },
   "artifacts":[
-   /* {
-      "type":"rip",
-      "x1":0.25,
-      "y1":0.25,
-      "x2":0.75,
-      "y2":0.75,
-      "offset":0.5
-    },
     {
       "type":"rip",
-      "x1":0.25,
-      "y1":0.75,
-      "x2":0.75,
-      "y2":0.25,
-      "offset":0.5
-    },
-    {
-      "type":"dual",
       "x1":0.5,
-      "y1":0.25,
+      "y1":0.5625,
       "x2":0.5,
-      "y2":0.75
+      "y2":1,
+      "offset":0.5
     },
     {
-      "type":"dual",
-      "x1":0.25,
+      "type":"rip",
+      "x1":0.4375,
+      "y1":0.5625,
+      "x2":0.4375,
+      "y2":1,
+      "offset":0.5
+    },
+    {
+      "type":"rip",
+      "x1":0,
+      "y1":0.5625,
+      "x2":0.4375,
+      "y2":0.5625,
+      "offset":0.5
+    },
+    {
+      "type":"rip",
+      "x1":0.5,
+      "y1":0.5625,
+      "x2":1,
+      "y2":0.5625,
+      "offset":0.5
+    },
+    {
+      "type":"rip",
+      "x1":0,
+      "y1":0.0625,
+      "x2":0.9375,
+      "y2":0.0625,
+      "offset":0.5
+    },
+    {
+      "type":"rip",
+      "x1":0.9375,
+      "y1":0.0625,
+      "x2":0.9375,
+      "y2":0.5,
+      "offset":0.5
+    },
+    {
+      "type":"rip",
+      "x1":0,
       "y1":0.5,
-      "x2":0.75,
-      "y2":0.5
-    }*/
+      "x2":0.9375,
+      "y2":0.5,
+      "offset":0.5
+    }
   ],
-  "fragment": "stripeFragment.shader",
-  "vertex": "stripeVertex.shader",
+  "fragment": "fragment.shader",
+  "vertex": "vertex.shader",
   "out": "build/bundeledShader.shader"
 }

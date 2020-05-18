@@ -9,12 +9,14 @@ public class ShaderBundler {
 
     private File vertexShader;
     private File fragmentShader;
+    private File geometryShader;
     private List<File> includes;
     private List<Artifact> artifacts;
 
-    public ShaderBundler(File vertexShader, File fragmentShader, List<File> includes, List<Artifact> artifacts){
+    public ShaderBundler(File vertexShader, File geometryShader, File fragmentShader, List<File> includes, List<Artifact> artifacts){
         this.vertexShader = vertexShader;
         this.fragmentShader = fragmentShader;
+        this.geometryShader = geometryShader;
         this.includes = includes;
         this.artifacts = artifacts;
     }
@@ -43,7 +45,11 @@ public class ShaderBundler {
         for(File f: includes){
             in = new BufferedReader(new FileReader(f));
             while((line = in.readLine()) != null){
-                out.write(line+"\n");
+                if(line.trim().equals("{ARTIFACTS}")){
+                    out.write(getArtifactsString());
+                }else {
+                    out.write(line + "\n");
+                }
             }
             in.close();
         }
@@ -57,8 +63,21 @@ public class ShaderBundler {
             }
         }
         in.close();
-
         out.write("#endif\n");
+
+        if(geometryShader != null) {
+            out.write("#ifdef GEOMETRY\n");
+            in = new BufferedReader(new FileReader(geometryShader));
+            while((line = in.readLine()) != null){
+                if(line.trim().equals("{ARTIFACTS}")){
+                    out.write(getArtifactsString());
+                }else {
+                    out.write(line + "\n");
+                }
+            }
+            out.write("#endif\n");
+        }
+
         out.write("#ifdef FRAGMENT\n");
         in = new BufferedReader(new FileReader(fragmentShader));
         while((line = in.readLine()) != null){
