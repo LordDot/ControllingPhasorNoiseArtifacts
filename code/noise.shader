@@ -37,9 +37,9 @@
           vec2 dir = vec2(cos(_o),sin(_o));
 
           float phi = 0.;
-          phi += 50*dot(uv, dir)*(2.*M_PI);
-          //phi += 200*dot(uv-0.5, uv-0.5);
-          phi +=20.*evalHirarchNoise(uv*3.5);
+          phi += 20*dot(uv, dir)*(2.*M_PI);
+          //phi += 20*dot(uv-0.5, uv-0.5);
+          phi +=4.5*evalHirarchNoise(uv*7);
           {ARTIFACTS}
 
 

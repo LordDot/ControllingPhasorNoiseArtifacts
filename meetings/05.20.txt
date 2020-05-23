@@ -1,1 +1,6 @@
 artefact vs artifact
+sources
+citing figures
+sources: article vs techreport vs. in proceedings
+abgabe
+presentation
