@@ -78,12 +78,13 @@
   \begin{columns}
     \column{0.5\textwidth}
     $$
-      G(\vec{x}) = \only<1>{I(\vec{x})}\only<2->{\xcancel{I(\vec{x})}}\cdot\sin(f\langle\vec{x},\vec{u}\rangle + \varphi(\vec{x}))
+      G(\vec{x}) = \only<1>{I(\vec{x})}\only<2->{\xcancel{I(\vec{x})}}
+      \cdot\sin(f\langle\vec{x},\vec{u}\rangle + \varphi(\vec{x}))
     $$
     \column{0.5\textwidth}
     \begin{figure}
       \centering
-      \only<2->{\includegraphics[width=0.6\textheight]{images/phasorSineWave.png}}
+      \uncover<2->{\includegraphics[width=0.6\textheight]{images/phasorSineWave.png}}
     \end{figure}
   \end{columns}
 }
@@ -165,8 +166,8 @@
     \end{cases}\\
   \uncover<2->{
     b(\vec{x}) &= \begin{cases}
-      \exp\left (\frac{d_s^2}{\sigma^2}\right ), &\text{if }d_s < d_t \land d_s < d_l\\
-      \exp\left (\frac{d_t^2}{\sigma^2}\right ), &\text{if }d_t < d_s \land d_t < d_l\\
+      \exp\left (\frac{d_s^2}{\sigma^2}\right ), &\text{if in 1}\\
+      \exp\left (\frac{d_t^2}{\sigma^2}\right ), &\text{if in 2}\\
       \exp\left (\frac{d_l^2}{\sigma^2}\right ), &\text{otherwise}\\
     \end{cases}\\
   }
@@ -176,7 +177,86 @@
 }
 
 \subsection{Rips}
-\section{Multiple Directions}
+\frame{
+  \frametitle{Rips}
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.6\textheight]{../report/images/fadedPhase.png}
+    \includegraphics[height=0.6\textheight]{../report/images/fadedPhaseSineWave.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Rips}
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.6\textheight]{../report/images/ripPhase.png}
+    \includegraphics[height=0.6\textheight]{../report/images/rip05.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Rips}
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.5\textheight]{../report/images/rip01.png}
+    \includegraphics[height=0.5\textheight]{../report/images/rip05.png}
+    \includegraphics[height=0.5\textheight]{../report/images/rip09.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Formula}
+  $$
+    r(\vec{x}) = w\cdot d(\vec{x})
+  $$
+}
+
+\frame{
+  \frametitle{Rip Chaining}
+  \begin{figure}
+    \includegraphics[width=0.6\textheight]{../report/images/ripChainingPhase.png}
+    \includegraphics[width=0.6\textheight]{../report/images/ripChaining.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Multiple Artifacts}
+  \begin{figure}
+    \includegraphics[width=0.6\textheight]{../report/images/combiningArtifacts.png}
+    \includegraphics[width=0.6\textheight]{../report/images/combiningArtifactsPositions.png}
+  \end{figure}
+}
+
 \section{Results}
+\frame{
+  \frametitle{Results}
+  \begin{figure}
+    \includegraphics[height=0.85\textheight]{../report/images/mountains.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Results}
+  \begin{figure}
+    \includegraphics[height=0.85\textheight]{../report/images/mountainsRip.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Results}
+  \begin{figure}
+    \includegraphics[height=0.85\textheight]{../report/images/desert.png}
+  \end{figure}
+}
+
+\section{Future Work}
+\frame{
+  \frametitle{Future Work}
+  \begin{itemize}
+      \item Multiple Directions
+      \item<2-> Higher Dimensions
+  \end{itemize}
+}
 
 \end{document}
