@@ -1,0 +1,182 @@
+\documentclass{beamer}
+\usepackage[orientation=landscape,size=custom,width=16,height=9,scale=0.5,debug]{beamerposter}
+\usepackage[utf8]{inputenc}
+\usepackage{caption}
+\usepackage{overpic}
+\usepackage{pgfplots}
+\usepackage{cancel}
+
+\usetheme{default}
+\author{Jonathan Lang}
+\title{Controlling Phasor Noise Artifacts}
+\makeatletter
+\makeatother
+
+\definecolor{background}{rgb}{1,1,0.9}
+
+\captionsetup{font=small,labelfont=small}
+\captionsetup[figure]{labelformat=empty}
+
+\DeclareMathOperator{\atan}{atan}
+
+\setbeamertemplate{footline}[text line]{%
+	\insertshortauthor\hfill\insertshorttitle\hfill\insertframenumber/\inserttotalframenumber%
+}
+
+\setbeamertemplate{navigation symbols}{}
+
+
+\begin{document}
+\setbeamercolor{background canvas}{bg=background}
+
+\frame{\titlepage}
+\frame{\parbox{\textwidth}{\tableofcontents}}
+
+\section{Background}
+\frame{
+  \frametitle{Gabor Noise}
+  $$
+    g(\vec{x}) = \exp\left (\frac{||\vec{x}||}{\sigma^2}\right )\cdot \cos(f\langle\vec{x},\vec{u}\rangle)
+  $$
+  $$
+    G(\vec{x}) = \sum_i g(\vec{x}-\vec{p}_i)
+  $$
+}
+
+\frame{
+  \frametitle{Gabor Noise}
+    \begin{figure}
+      \includegraphics[width=0.6\textheight]{../report/images/gaborKernel.png} 
+      \includegraphics[width=0.6\textheight]{images/gaborNoise.png} 
+    \end{figure}
+}
+
+\frame{
+  \frametitle{Phasor Noise}
+	\begin{center}
+		\resizebox{0.4\textwidth}{0.3\textheight}{%
+			\input{images/function.tex}%
+		}
+		\resizebox{0.3\textwidth}{0.25\textheight}{%
+			$=$
+		}\\
+	\end{center}
+	\only<1>{\resizebox{0.4\textwidth}{0.3\textheight}{\color{background}{test}}}
+	\only<2->{
+		\resizebox{0.4\textwidth}{0.3\textheight}{%
+			\input{images/envelope.tex}%
+		}
+		\resizebox{0.1\textwidth}{0.17\textwidth}{$\cdot$}
+	\resizebox{0.4\textwidth}{0.3\textheight}{%
+		\input{images/sin.tex}%
+	}
+	}
+}
+
+\frame{
+  \frametitle{Phasor Noise}
+  \begin{columns}
+    \column{0.5\textwidth}
+    $$
+      G(\vec{x}) = \only<1>{I(\vec{x})}\only<2->{\xcancel{I(\vec{x})}}\cdot\sin(f\langle\vec{x},\vec{u}\rangle + \varphi(\vec{x}))
+    $$
+    \column{0.5\textwidth}
+    \begin{figure}
+      \centering
+      \only<2->{\includegraphics[width=0.6\textheight]{images/phasorSineWave.png}}
+    \end{figure}
+  \end{columns}
+}
+
+\section{Controlling the Artifacts}
+\frame{
+  \frametitle{$\varphi$}
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.6\textheight]{images/phasorSineWave.png}
+    \includegraphics[height=0.6\textheight]{../report/images/phasorPhase.png}
+  \end{figure}
+}
+
+\subsection{Wobble}
+\frame{
+  \frametitle{Wobble}
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.6\textheight]{../report/images/wobblePhase.png}
+    \includegraphics[height=0.6\textheight]{../report/images/wobble.png}
+  \end{figure}
+}
+\subsection{Singularities}
+\frame{
+  \frametitle{Right Singularity}
+  \begin{figure}
+    \includegraphics[height=0.6\textheight]{../report/images/rightSingularityPhase.png}
+    \includegraphics[height=0.6\textheight]{../report/images/rightSingularity.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Left Singularity}
+  \begin{figure}
+    \includegraphics[height=0.6\textheight]{../report/images/leftSingularityPhase.png}
+    \includegraphics[height=0.6\textheight]{../report/images/leftSingularity.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Formulas}
+  \begin{align*}
+    r(\vec{x}) &= \atan(\vec{x})\\
+    l(\vec{x}) &= -\atan(\vec{x})
+  \end{align*}
+}
+
+\frame{
+  \frametitle{Fading out}
+  \begin{figure}
+    \includegraphics[height=0.6\textheight]{../report/images/fadedPhase.png}
+    \includegraphics[height=0.6\textheight]{../report/images/fadedPhaseSineWave.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Dual Singularities}
+  \begin{figure}
+    \includegraphics[height=0.6\textheight]{../report/images/dualSingularityPhase.png}
+    \includegraphics[height=0.6\textheight]{../report/images/dualSingularityFaded.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Dual Singularities}
+  \begin{figure}
+    \includegraphics[height=0.6\textheight]{../report/images/dualSingularityFaded.png}
+    \includegraphics[height=0.6\textheight]{../report/images/dualSingularitySineWave.png}
+  \end{figure}
+}
+
+\frame{
+  \frametitle{Formulas}
+  \begin{align*}
+    a(\vec{x}) &= \begin{cases}
+    \atan(\vec{x}-\vec{s}) - \theta, &\text{if $s$ nearer than $t$}\\
+    \pi - \atan(\vec{x}-\vec{t}) + \theta, &\text{otherwise}
+    \end{cases}\\
+  \uncover<2->{
+    b(\vec{x}) &= \begin{cases}
+      \exp\left (\frac{d_s^2}{\sigma^2}\right ), &\text{if }d_s < d_t \land d_s < d_l\\
+      \exp\left (\frac{d_t^2}{\sigma^2}\right ), &\text{if }d_t < d_s \land d_t < d_l\\
+      \exp\left (\frac{d_l^2}{\sigma^2}\right ), &\text{otherwise}\\
+    \end{cases}\\
+  }
+    \uncover<3->{d(\vec{x}) &= ((a(\vec{x})-\pi)\ \mathrm{mod}\ 2\pi)\ b(\vec{x})}
+  \end{align*}
+
+}
+
+\subsection{Rips}
+\section{Multiple Directions}
+\section{Results}
+
+\end{document}
