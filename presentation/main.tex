@@ -35,20 +35,31 @@
 \section{Background}
 \frame{
   \frametitle{Gabor Noise}
+  \begin{columns}
+    \column{0.5\textwidth}
   $$
     g(\vec{x}) = \exp\left (\frac{||\vec{x}||}{\sigma^2}\right )\cdot \cos(f\langle\vec{x},\vec{u}\rangle)
   $$
-  $$
-    G(\vec{x}) = \sum_i g(\vec{x}-\vec{p}_i)
-  $$
+    \column{0.5\textwidth}
+    \begin{figure}
+      \includegraphics[width=0.6\textheight]{../report/images/gaborKernel.png} 
+    \end{figure}
+  \end{columns}
 }
+
 
 \frame{
   \frametitle{Gabor Noise}
+  \begin{columns}
+    \column{0.5\textwidth}
+  $$
+    G(\vec{x}) = \sum_i g(\vec{x}-\vec{p}_i)
+  $$
+    \column{0.5\textwidth}
     \begin{figure}
-      \includegraphics[width=0.6\textheight]{../report/images/gaborKernel.png} 
       \includegraphics[width=0.6\textheight]{images/gaborNoise.png} 
     \end{figure}
+  \end{columns}
 }
 
 \frame{
@@ -159,6 +170,8 @@
 
 \frame{
   \frametitle{Formulas}
+  \begin{columns}
+    \column{0.75\textwidth}
   \begin{align*}
     a(\vec{x}) &= \begin{cases}
     \atan(\vec{x}-\vec{s}) - \theta, &\text{if $s$ nearer than $t$}\\
@@ -173,6 +186,18 @@
   }
     \uncover<3->{d(\vec{x}) &= ((a(\vec{x})-\pi)\ \mathrm{mod}\ 2\pi)\ b(\vec{x})}
   \end{align*}
+    \column{0.25\textwidth}
+    \uncover<2->{
+    \begin{figure}
+      \begin{overpic}[height=0.3\textheight]{../report/images/dualSingularityFaded.png}
+        \put(5,40){\huge{1}}
+        \put(80,40){\huge{2}}
+        \put(25,0){\line(0,1){100}}
+        \put(75,0){\line(0,1){100}}
+      \end{overpic}
+    \end{figure}
+  }
+  \end{columns}
 
 }
 
