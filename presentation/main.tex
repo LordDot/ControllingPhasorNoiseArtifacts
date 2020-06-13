@@ -5,6 +5,7 @@
 \usepackage{overpic}
 \usepackage{pgfplots}
 \usepackage{cancel}
+\usepackage{moresize}
 
 \usetheme{default}
 \author{Jonathan Lang}
@@ -31,6 +32,17 @@
 
 \frame{\titlepage}
 \frame{\parbox{\textwidth}{\tableofcontents}}
+
+\section{Motivation}
+\frame{
+  \frametitle{Isn't Noise bad?}
+  \uncover<2->{
+  \begin{figure}
+    \includegraphics[height=0.8\textheight]{images/minecraft.png}
+    \centering
+  \end{figure}  
+}
+}
 
 \section{Background}
 \frame{
@@ -60,6 +72,9 @@
       \includegraphics[width=0.6\textheight]{images/gaborNoise.png} 
     \end{figure}
   \end{columns}
+  \begin{center}
+    ("Procedural Noise using Sparse Gabor Convolution" Lagae, Lefebvre, Drettakis and Dutré)
+  \end{center}
 }
 
 \frame{
@@ -98,11 +113,14 @@
       \uncover<2->{\includegraphics[width=0.6\textheight]{images/phasorSineWave.png}}
     \end{figure}
   \end{columns}
+  \begin{center}
+    ("Procedural Phasor Noise" Tricard, Efremov, Zanni, Neyret, Martínez and Lefebvre)
+  \end{center}
 }
 
 \section{Controlling the Artifacts}
 \frame{
-  \frametitle{$\varphi$}
+  \frametitle{Phase offset $\varphi$}
   \begin{figure}
     \centering
     \includegraphics[height=0.6\textheight]{images/phasorSineWave.png}
@@ -125,6 +143,9 @@
   \begin{figure}
     \includegraphics[height=0.6\textheight]{../report/images/rightSingularityPhase.png}
     \includegraphics[height=0.6\textheight]{../report/images/rightSingularity.png}
+    $$
+      r(\vec{x}) = \atan(\vec{x})
+    $$
   \end{figure}
 }
 
@@ -134,14 +155,9 @@
     \includegraphics[height=0.6\textheight]{../report/images/leftSingularityPhase.png}
     \includegraphics[height=0.6\textheight]{../report/images/leftSingularity.png}
   \end{figure}
-}
-
-\frame{
-  \frametitle{Formulas}
-  \begin{align*}
-    r(\vec{x}) &= \atan(\vec{x})\\
-    l(\vec{x}) &= -\atan(\vec{x})
-  \end{align*}
+  $$
+    l(\vec{x}) = -\atan(\vec{x})
+  $$
 }
 
 \frame{
@@ -169,7 +185,7 @@
 }
 
 \frame{
-  \frametitle{Formulas}
+  \frametitle{Dual Singularity in Formulas}
   \begin{columns}
     \column{0.75\textwidth}
   \begin{align*}
@@ -187,16 +203,18 @@
     \uncover<3->{d(\vec{x}) &= ((a(\vec{x})-\pi)\ \mathrm{mod}\ 2\pi)\ b(\vec{x})}
   \end{align*}
     \column{0.25\textwidth}
-    \uncover<2->{
     \begin{figure}
       \begin{overpic}[height=0.3\textheight]{../report/images/dualSingularityFaded.png}
         \put(5,40){\huge{1}}
         \put(80,40){\huge{2}}
         \put(25,0){\line(0,1){100}}
         \put(75,0){\line(0,1){100}}
+        \put(25,50){\circle*{5}}
+        \put(28,40){\huge{s}}
+        \put(75,50){\circle*{5}}
+        \put(60,40){\huge{t}}
       \end{overpic}
     \end{figure}
-  }
   \end{columns}
 
 }
@@ -218,24 +236,39 @@
     \includegraphics[height=0.6\textheight]{../report/images/ripPhase.png}
     \includegraphics[height=0.6\textheight]{../report/images/rip05.png}
   \end{figure}
-}
-
-\frame{
-  \frametitle{Rips}
-  \begin{figure}
-    \centering
-    \includegraphics[height=0.5\textheight]{../report/images/rip01.png}
-    \includegraphics[height=0.5\textheight]{../report/images/rip05.png}
-    \includegraphics[height=0.5\textheight]{../report/images/rip09.png}
-  \end{figure}
-}
-
-\frame{
-  \frametitle{Formula}
   $$
     r(\vec{x}) = w\cdot d(\vec{x})
   $$
 }
+
+\frame{
+  \frametitle{Rips}
+  \begin{columns}
+    \column{0.5\textheight}
+  \begin{figure}
+    \centering
+    \includegraphics[height=0.5\textheight]{../report/images/rip01.png}
+  \end{figure}
+  $$
+    0.1
+    $$
+    \column{0.5\textheight}
+    \begin{figure}
+    \includegraphics[height=0.5\textheight]{../report/images/rip05.png}
+    \end{figure}
+    $$
+    0.5
+    $$
+    \column{0.5\textheight}
+    \begin{figure}
+    \includegraphics[height=0.5\textheight]{../report/images/rip09.png}
+    \end{figure}
+    $$
+    0.9
+    $$
+  \end{columns}
+}
+
 
 \frame{
   \frametitle{Rip Chaining}
@@ -282,6 +315,12 @@
       \item Multiple Directions
       \item<2-> Higher Dimensions
   \end{itemize}
+}
+
+\frame{
+  \begin{center}
+  \HUGE{?}
+  \end{center}
 }
 
 \end{document}

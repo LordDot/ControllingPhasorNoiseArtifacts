@@ -1,0 +1,7 @@
+move formulas
+add rip weights
+end slide
+motivation
+add more text to \phi headline
+gabor/phasor citation
+s/t for formula
